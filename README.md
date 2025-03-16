@@ -1,97 +1,110 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# **Security Assessment Report: Totally Secure Math App**
 
-# Getting Started
+## **1. Introduction**
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+This report presents a security assessment of the Totally Secure Math App, identifying vulnerabilities and implementing security measures to enhance its safety. The main focus is on addressing insecure data storage, improper authentication, code injection, insufficient input validation, and insecure coding practices.
 
-## Step 1: Start Metro
+Security best practices have been implemented to mitigate potential attacks, ensuring the app maintains high data integrity and user protection.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+---
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## **2. Identified Vulnerabilities and Fixes**
 
-```sh
-# Using npm
-npm start
+### **2.1 Insecure Data Storage**
 
-# OR using Yarn
-yarn start
-```
+- **Issue**: Notes were stored in plaintext using `AsyncStorage`, making them vulnerable to unauthorized access.
+- **Fix**: Replaced `AsyncStorage` with `EncryptedStorage` to securely encrypt and store user data.
+- **Why?** Encrypted storage ensures that sensitive information remains protected even if an attacker gains access to the device.
 
-## Step 2: Build and run your app
+---
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+### **2.2 Improper Authentication**
 
-### Android
+- **Issue**: The app stored **hardcoded credentials** in the code, making it easy for an attacker to extract login details.
+- **Fix**: Implemented **SHA-256 hashing using `crypto-js`** to store and verify passwords securely.
+- **Why?** This prevents plaintext password storage and ensures secure authentication without requiring native dependencies.
 
-```sh
-# Using npm
-npm run android
+---
 
-# OR using Yarn
-yarn android
-```
+### **2.3 Code Injection**
 
-### iOS
+- **Issue**: The `Note.tsx` component used `eval(props.text)`, which could allow **arbitrary JavaScript execution**.
+- **Fix**: Removed `eval()` and replaced it with a **sanitized math expression evaluator** that only allows numbers and mathematical operators.
+- **Why?** Prevents attackers from injecting and executing malicious scripts.
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+---
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### **2.4 Insufficient Input Validation**
 
-```sh
-bundle install
-```
+- **Issue**: The app did not validate user inputs, allowing injection attacks and potentially malicious entries.
+- **Fix**: Applied **regular expressions to sanitize user input** and restricted entry to safe characters only.
+- **Why?** Prevents code injection attacks and ensures users input valid data.
 
-Then, and every time you update your native dependencies, run:
+---
 
-```sh
-bundle exec pod install
-```
+### **2.5 Insecure Coding Practices**
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+- **Issue**: Lack of error handling in critical areas such as authentication and storage.
+- **Fix**: Wrapped storage and authentication logic inside **try-catch blocks** to prevent crashes and data corruption.
+- **Why?** Proper error handling improves app stability and security.
 
-```sh
-# Using npm
-npm run ios
+---
 
-# OR using Yarn
-yarn ios
-```
+## **3. Implemented Security Measures**
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+| **Vulnerability**                 | **Fix Implemented**                                             |
+| --------------------------------- | --------------------------------------------------------------- |
+| **Insecure Data Storage**         | Used `EncryptedStorage` instead of `AsyncStorage`               |
+| **Improper Authentication**       | Replaced hardcoded passwords with SHA-256 hashing (`crypto-js`) |
+| **Code Injection**                | Removed `eval()` and replaced it with a safe math evaluator     |
+| **Insufficient Input Validation** | Sanitized user inputs using regex filtering                     |
+| **Insecure Coding Practices**     | Added proper error handling to prevent crashes                  |
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+---
 
-## Step 3: Modify your app
+## **4. Importance of These Security Measures**
 
-Now that you have successfully run the app, let's make changes!
+The implemented security measures significantly improve the app’s safety by:
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+- **Protecting sensitive data** through encrypted storage.
+- **Ensuring password security** with SHA-256 hashing.
+- **Preventing code injection attacks** by restricting input values.
+- **Improving user experience** through proper error handling.
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+These enhancements not only **protect user data** but also **ensure the long-term security and stability of the application**.
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+---
 
-## Congratulations! :tada:
+## **5. Reflection and Lessons Learned**
 
-You've successfully run and modified your React Native App. :partying_face:
+Through this security assessment, the following key takeaways emerged:
 
-### Now what?
+- **Avoid storing credentials in plaintext**—always use hashing.
+- **Never use `eval()` or similar functions**—they pose serious security risks.
+- **Validate all user inputs** before processing them.
+- **Encrypt sensitive data** before storing it.
+- **Error handling is essential** to prevent crashes and unexpected failures.
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+Applying these best practices will be crucial for developing **secure and reliable applications** in the future.
 
-# Troubleshooting
+---
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+## **6. References**
 
-# Learn More
+[1] Android Developers, “Security Tips.” Available: https://developer.android.com/privacy-and-security/security-tips. [Accessed: Mar. 16, 2025].
 
-To learn more about React Native, take a look at the following resources:
+[2] Snyk, “5 Ways to Prevent Code Injection in JavaScript and Node.js.” Available: https://snyk.io/blog/5-ways-to-prevent-code-injection-in-javascript-and-node-js. [Accessed: Mar. 16, 2025].
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+[3] NowSecure, “13 Mobile App Security Best Practices.” Available: https://www.nowsecure.com/blog/2023/02/24/13-mobile-app-security-best-practices. [Accessed: Mar. 16, 2025].
+
+[4] Reflectiz, “The Essential Guide to Preventing JavaScript Injection.” Available: https://www.reflectiz.com/blog/essential-guide-to-preventing-javascript-injection. [Accessed: Mar. 16, 2025].
+
+[5] Medium, “Security Tips and Best Practices to Develop Secure Mobile Applications.” Available: https://medium.com/@PedalsUp/security-tips-and-best-practices-to-develop-secure-mobile-applications-b2576c38d026. [Accessed: Mar. 16, 2025].
+
+---
+
+## **7. Conclusion**
+
+The Totally Secure Math App initially had **serious security vulnerabilities** that could lead to data breaches, authentication bypasses, and code execution attacks. By implementing **secure storage, authentication, input validation, and error handling**, the app is now **far more secure and resistant to common exploits**.
+
+Security should always be a **top priority** in mobile applications, and these measures will help maintain **a safer and more trustworthy app environment** for users.
